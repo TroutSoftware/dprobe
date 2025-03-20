@@ -1,0 +1,45 @@
+DProbe: A Remote Debugging Framework
+====================================
+
+DProbe (Debug Probe) is a project to create a remote console for OS troubleshooting.
+It is designed for use in appliance projects where the OS is bundled as an integral part of
+a device, without a general-purpose shell or equivalent.
+
+The goals of the project are:
+
+**Low Overhead**: we use probes in production to measure performance issues, collect profiles
+and observe networks. A stop-the-world debugger is not an option in those cases.
+
+**Security**: too many debug probes in the wild are left open, or with default credentials,
+which offers a full back-door on otherwise secure devices.
+
+**Robust UX**: troubleshooting is usually a stressful activity, and the tools should provide
+safe defaults, short mnemonics and limit damages caused by an incorrect activity.
+
+## Framework Architecture
+
+DProbe is built on a standard client-server architecture over SSH protocol. A small agent on the
+appliance is responsible to listen for client, authenticate them by their SSH key, and establish
+connections for interactive access or file management.
+
+The probes are tools (both first and third-party) that need to be compiled and packaged in the
+base image. Upon successful login, the agent starts receives a command, creates a new session to
+pipe data to and from the tool, and executes the tool.
+
+It is strongly advised to use the OS security features (jails, users, …) to limit the capabilities
+of the agent.
+
+## UX
+
+The probe runs over an SSH connection – but does not offer all the PTY capabilities of a shell
+(for example, no job control, nor terminal UI).
+
+Tools available in the probe are organized in menus, with sub-items separated by `/`, for example:
+
+ /net/tcpdump
+
+Each tool allow for optional, named arguments:
+
+ /net/tcpdump file=record.pcap filter='udp and port 65'
+
+The client should provide a list of shell auto-completion based on the menus, and the options.
