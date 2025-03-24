@@ -38,8 +38,8 @@ Tools available in the probe are organized in menus, with sub-items separated by
 
  /net/tcpdump
 
-Each tool allow for optional, named arguments:
+Tools allow arguments, that are passed as-is:
 
- /net/tcpdump file=record.pcap filter='udp and port 65'
+ /net/tcpdump -w=record.pcap udp and port 65
 
 The client should provide a list of shell auto-completion based on the menus, and the options.
