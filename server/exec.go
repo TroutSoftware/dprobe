@@ -28,8 +28,11 @@ type Executor interface {
 
 var gmenu sync.Map
 
-func init() {
-	gmenu.Store("/coreutils/ls", bincmd("ls"))
+// Alias registers menu to execute local binary at path
+//
+//	Alias("/coreutils/ps", "ps")
+func Alias(menu, path string) {
+	gmenu.Store(menu, bincmd(path))
 }
 
 func Run(cmd execMsg, ssn ssh.Channel, rq <-chan *ssh.Request) error {
