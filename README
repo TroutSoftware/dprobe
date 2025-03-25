@@ -43,3 +43,14 @@ Tools allow arguments, that are passed as-is:
  /net/tcpdump -w=record.pcap udp and port 65
 
 The client should provide a list of shell auto-completion based on the menus, and the options.
+
+## Use the shell, Luke
+
+SSH usually opens a shell on the remote host – which is a poor option if the host lacks a POSIX
+(or equivalent) shell, or if the shell is limited (Busybox’s ash).
+
+Instead, dprobe relies on the shell running on the developer’s machine (with rich syntax, custom
+shortcurts and coloring), only shipping commands remotely. In this respect, it behaves a lot like
+Emacs TRAMP mode.
+
+This also enable job control on dprobe side, as well as detailed security monitoring.

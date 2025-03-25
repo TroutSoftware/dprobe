@@ -1,7 +1,9 @@
 package agent
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net"
 	"os"
@@ -125,8 +127,8 @@ func serve(tconn net.Conn, config *ssh.ServerConfig) {
 			slog.Info("failed to run command", "command", cmd, "error", err)
 		}
 
-		if err := session.Close(); err != nil {
-			slog.Info("training session", "error", err)
+		if err := session.Close(); err != nil && !errors.Is(err, io.EOF) {
+			slog.Info("closing session", "error", err)
 		}
 	}
 	wg.Wait()

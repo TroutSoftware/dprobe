@@ -36,6 +36,12 @@ func Run(cmd execMsg, ssn ssh.Channel, rq <-chan *ssh.Request) error {
 	path, args := parseline(cmd.Command)
 	rc, ok := gmenu.Load(path)
 	if !ok {
+		// rfc4254#section-6.10
+		ssn.SendRequest("exit-status", false, ssh.Marshal(struct {
+			Status uint32 `ssh:"exit_status"`
+		}{uint32(1)}))
+		ssn.CloseWrite()
+
 		return fmt.Errorf("no such command %s", cmd.Command)
 	}
 
@@ -83,8 +89,10 @@ func (c bincmd) Do(session ssh.Channel, requests <-chan *ssh.Request, args []str
 	// return with exit code
 	code := 0
 	if err, ee := cmd.Run(), new(exec.ExitError); errors.As(err, &ee) {
+		fmt.Println("ls error", err)
 		code = ee.ExitCode()
 	} else if err != nil {
+		fmt.Println("no nil return??")
 		return fmt.Errorf("running %v: %w", cmd, err)
 	}
 
